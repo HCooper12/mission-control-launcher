@@ -4,7 +4,6 @@
 <meta charset="utf-8">
 <title>Mission Control</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="refresh" content="0; url=https://claude.ai/code/artifact/0be54427-e4a1-4382-95ba-722819d96c59">
 
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
@@ -21,31 +20,52 @@
   html,body{height:100%}
   body{
     margin:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
-    gap:18px; background:#0b0f14; color:#c9d3de;
+    gap:16px; background:#0b0f14; color:#c9d3de;
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-    text-align:center; padding:24px; box-sizing:border-box;
+    text-align:center; padding:32px; box-sizing:border-box;
   }
-  img{width:88px; height:88px; animation:pulse 1.6s ease-in-out infinite}
+  img{width:88px; height:88px}
+  img.pulse{animation:pulse 1.6s ease-in-out infinite}
   @keyframes pulse{0%,100%{opacity:1; transform:scale(1)} 50%{opacity:.75; transform:scale(.96)}}
-  p{margin:0; font-size:14px; color:#8a97a8}
-  a{color:#5aa9ff; text-decoration:none; font-size:14px; margin-top:6px}
-  a:hover{text-decoration:underline}
+  h1{font-size:17px; font-weight:650; margin:4px 0 0; color:#e8edf3}
+  p{margin:0; font-size:14px; color:#8a97a8; max-width:320px; line-height:1.5}
+  .open{
+    display:inline-block; margin-top:6px; padding:11px 22px; border-radius:10px;
+    background:linear-gradient(180deg,#5aa9ff,#3d7fd6); color:#fff; font-weight:650;
+    font-size:14px; text-decoration:none; box-shadow:0 2px 10px rgba(90,169,255,.35);
+  }
+  .hint{font-size:12px; color:#5b6b7d; margin-top:20px; line-height:1.6; max-width:300px}
+  .hint b{color:#8a97a8}
   @media (prefers-reduced-motion:reduce){ img{animation:none} }
 </style>
 </head>
 <body>
-  <img src="icon-192.png" alt="" width="88" height="88">
-  <p>Opening Mission Control…</p>
-  <a href="https://claude.ai/code/artifact/0be54427-e4a1-4382-95ba-722819d96c59">Tap here if it doesn't open</a>
+  <img id="icon" src="icon-192.png" alt="">
+  <h1 id="title">Mission Control</h1>
+  <p id="msg">This page only exists to give the shortcut its own icon. Add it to your Home Screen or Dock now, then use the icon from here on.</p>
+  <a class="open" id="openlink" href="https://claude.ai/code/artifact/0be54427-e4a1-4382-95ba-722819d96c59">Open Mission Control</a>
+  <p class="hint" id="hint">Look for <b>Add to Home Screen</b> (iPhone) or <b>Add to Dock</b> (Mac) in your browser's share or menu options — do that <b>before</b> tapping Open, so the icon you save is this one.</p>
 
   <script>
-    // This page exists only to own a real, custom Home Screen icon — something
-    // claude.ai's own site identity does not let an individual artifact page
-    // override. It has no content of its own: it hands off immediately to the
-    // real, live Mission Control page, where every feature (the Notion ops
-    // board, deploy agents, the veto queue) runs exactly as normal, because at
-    // that point you are genuinely inside claude.ai, not inside this redirect.
-    location.replace("https://claude.ai/code/artifact/0be54427-e4a1-4382-95ba-722819d96c59");
+    var TARGET = "https://claude.ai/code/artifact/0be54427-e4a1-4382-95ba-722819d96c59";
+    // Standalone = launched FROM an already-added Home Screen/Dock icon, not a normal
+    // browser tab. iOS Safari and Chrome iOS both honor the manifest's display mode
+    // for this (they share the same underlying WebKit web view), so this check works
+    // across both. Only in that case do we skip straight through: the icon was
+    // already captured by the OS at add-time, so speed here costs nothing.
+    var standalone = (window.navigator.standalone === true) ||
+      (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches);
+    if (standalone) {
+      document.getElementById("icon").className = "pulse";
+      document.getElementById("title").textContent = "";
+      document.getElementById("msg").textContent = "Opening…";
+      document.getElementById("openlink").style.display = "none";
+      document.getElementById("hint").style.display = "none";
+      location.replace(TARGET);
+    }
+    // Otherwise: stay put. The visible "Open Mission Control" link and the on-screen
+    // hint are the whole point — they give a moment to add the shortcut against THIS
+    // stable page before navigating anywhere.
   </script>
 </body>
 </html>
